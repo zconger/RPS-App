@@ -1,2 +1,6 @@
 */__pycache__
 */.DS_STORE
+build
+dist
+venv
+RPS_App.egg-info
