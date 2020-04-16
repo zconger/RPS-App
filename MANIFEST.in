@@ -1,0 +1,2 @@
+recursive-include RPS-App/templates *
+recursive-include RPS-App/static *
