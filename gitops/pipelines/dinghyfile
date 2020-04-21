@@ -4,7 +4,7 @@
         "email": "andrew.way@armory.io"
     },
     "globals": {
-        "waitTime": "5"
+        "waitTime": "10"
     },
     "deleteStalePipelines": false,
     "pipelines": [
