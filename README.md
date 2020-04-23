@@ -15,5 +15,5 @@ Dockerfile will create a docker image of the Flask App /RPS-App
 ## Environment Variables:
 
 `RPS_USER` - this is username that gets displayed
-`RPS_VERSION` - just a version number that gets added to v0.1.2+
+`RPS_VERSION` - just a version number that gets added to site. (unrelated to actual deployment)
 `RPS_WEBPORT` - if specified determines which port the app runs.  

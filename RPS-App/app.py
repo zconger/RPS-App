@@ -72,5 +72,5 @@ def whoWon(playergesture, computergesture, playername):
 
 
 if __name__ == '__main__':
-    rpswebport = os.getenv('RPSWEB_PORT', 80)
+    rpswebport = os.getenv('RPS_WEBPORT', 80)
     app.run(debug=True, host='0.0.0.0', port=rpswebport)
