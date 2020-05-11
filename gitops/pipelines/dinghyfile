@@ -1,15 +1,15 @@
 {
-    "application": "lab1-k8s",
+    "application": "rps-app",
     "spec": {
         "email": "andrew.way@armory.io"
     },
     "globals": {
-        "waitTime": "5"
+        "waitTime": "10"
     },
     "deleteStalePipelines": false,
     "pipelines": [
         {
-            "application": "lab1-k8s",
+            "application": "rps-app",
             "name": "My First K8s Pipeline (gitops)",
             "keepWaitingPipelines": false,
             "lastModifiedBy": "andrew.way@armory.io",
