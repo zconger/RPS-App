@@ -78,7 +78,7 @@
           "artifactAccount" "github"
           "artifactName" "gitops/manifests/deployment.yml"
           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
-          "name" "deploy CM"
+          "name" "deploy App"
           "requisiteStageRefIds" ["deploy CM"]
         }}
       ],
