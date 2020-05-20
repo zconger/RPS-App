@@ -9,11 +9,80 @@
   },
   "deleteStalePipelines": false,
   "pipelines": [
-  {{ module "pipeline.rps.v1"
-     "pipelineName" "Deploy RPS App to Dev (GitOps)"
-     "namespace" "dev"
-     "account" "dev-us-west-2"
-  }},
+    {
+      "application": "rps-app",
+      "name": "Deploy to Dev (GitOps)",
+      "keepWaitingPipelines": false,
+      "lastModifiedBy": "away168",
+      "limitConcurrent": true,
+      "parameterConfig": [
+        {
+          "default": "${trigger.user}",
+          "description": "",
+          "hasOptions": false,
+          "label": "",
+          "name": "user",
+          "options": [
+            {
+              "value": ""
+            }
+          ],
+          "pinned": true,
+          "required": true
+        },
+        {
+          "default": "v0.1.2",
+          "description": "",
+          "hasOptions": true,
+          "label": "",
+          "name": "tag",
+          "options": [
+            {
+              "value": "v1.0.0"
+            },
+            {
+              "value": "v0.1.2"
+            },
+            {
+              "value": "v0.1.1"
+            }
+          ],
+          "pinned": true,
+          "required": true
+        }
+      ],
+      "spelEvaluator": "v4",
+      "stages": [
+        {{ module "deploy.artifact.v1"
+           "account" "dev-us-west-2"
+           "namespace" "dev"
+           "artifactAccount" "github"
+           "artifactName" "gitops/manifests/service.yml"
+           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/service.yml"
+           "name" "deploy LB"
+        }},
+        {{ module "deploy.artifact.v1"
+          "account" "dev-us-west-2"
+          "namespace" "dev"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/configmap.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/configmap.yml"
+          "name" "deploy CM"
+          "requisiteStageRefIds" ["deploy LB"]
+        }},
+        {{ module "deploy.artifact.v1"
+          "account" "dev-us-west-2"
+          "namespace" "dev"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/deployment.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
+          "name" "deploy App"
+          "requisiteStageRefIds" ["deploy CM"]
+        }}
+      ],
+      "triggers": [],
+      "updateTs": "1589949805000"
+    },
   {{ module "pipeline.rps.v1"
     "pipelineName" "Deploy RPS App to Prod (GitOps)"
     "namespace" "prod"
