@@ -76,6 +76,16 @@
           "artifactAccount" "github"
           "artifactName" "gitops/manifests/deployment.yml"
           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
+          "requiredArtifacts" [{
+            "artifact": {
+                "artifactAccount": "docker-registry",
+                "id": "e4a8c2f5-0404-476c-9d30-f1691af34f47",
+                "name": "away168/rps",
+                "reference": "away168/rps:${parameters.tag}",
+                "type": "docker/image",
+                "version": "${parameters.tag}"
+            }
+          }]
           "name" "deploy App"
           "requisiteStageRefIds" ["deploy CM"]
         }}
