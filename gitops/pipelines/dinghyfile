@@ -11,7 +11,7 @@
   "pipelines": [
     {
       "application": "rps-app",
-      "name": "Deploy to Dev (GitOps) - May20",
+      "name": "Deploy to Dev (GitOps)",
       "keepWaitingPipelines": false,
       "lastModifiedBy": "away168",
       "limitConcurrent": true,
