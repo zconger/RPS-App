@@ -556,7 +556,7 @@
     },
     {
       "application": "rpsapp",
-      "name": "Deploy to ECS (GitOps)"
+      "name": "Deploy to ECS (GitOps)",
       "appConfig": {},
       "keepWaitingPipelines": false,
       "lastModifiedBy": "away168",
