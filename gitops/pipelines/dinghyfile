@@ -637,6 +637,8 @@
               "cloudProvider": "ecs",
               "computeUnits": 512,
               "copySourceScalingPoliciesAndActions": false,
+              "delayBeforeDisableSec": "10",
+              "delayBeforeScaleDownSec": "60",
               "dockerImageCredentialsSecret": "None (No registry credentials)",
               "dockerLabels": {},
               "ecsClusterName": "rps-ecs",
@@ -654,6 +656,7 @@
               },
               "launchType": "FARGATE",
               "loadBalancers": [],
+              "maxRemainingAsgs": 2,
               "moniker": {
                 "app": "rpsapp",
                 "stack": "dev"
@@ -665,13 +668,17 @@
               "preferSourceCapacity": false,
               "provider": "ecs",
               "reservedMemory": 1024,
+              "rollback": {
+                "onFailure": true
+              },
+              "scaleDown": true,
               "securityGroupNames": [
                 "http-and-https"
               ],
               "securityGroups": [],
               "serviceDiscoveryAssociations": [],
               "stack": "dev",
-              "strategy": "highlander",
+              "strategy": "redblack",
               "subnetType": "default-az4",
               "tags": {},
               "targetGroup": "",
