@@ -59,7 +59,7 @@
            "artifactAccount" "github"
            "artifactName" "gitops/manifests/service.yml"
            "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/service.yml"
-           "name" "deploy LB"
+           "name" "deploy LB - May29"
         }},
         {{ module "deploy.artifact.v1"
           "account" "dev-us-west-2"
@@ -68,7 +68,7 @@
           "artifactName" "gitops/manifests/configmap.yml"
           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/configmap.yml"
           "name" "deploy CM"
-          "requisiteStageRefIds" ["deploy LB"]
+          "requisiteStageRefIds" ["deploy LB - May29"]
         }},
         {{ module "deploy.artifact.v1"
           "account" "dev-us-west-2"
