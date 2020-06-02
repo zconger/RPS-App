@@ -553,6 +553,150 @@
       ],
       "triggers": [],
       "updateTs": "1590782368000"
+    },
+    {
+      "application": "rpsapp",
+      "name": "Deploy to ECS (GitOps)"
+      "appConfig": {},
+      "keepWaitingPipelines": false,
+      "lastModifiedBy": "away168",
+      "limitConcurrent": true,
+      "parameterConfig": [
+        {
+          "default": "v0.1.1",
+          "description": "",
+          "hasOptions": true,
+          "label": "",
+          "name": "version",
+          "options": [
+            {
+              "value": "v0.1.1"
+            },
+            {
+              "value": "v0.1.2"
+            },
+            {
+              "value": "v1.0.0"
+            },
+            {
+              "value": "bad"
+            }
+          ],
+          "pinned": true,
+          "required": true
+        },
+        {
+          "default": "${trigger.user}",
+          "description": "",
+          "hasOptions": false,
+          "label": "",
+          "name": "user",
+          "options": [
+            {
+              "value": "${trigger.user}"
+            },
+            {
+              "value": ""
+            }
+          ],
+          "pinned": true,
+          "required": true
+        }
+      ],
+      "spelEvaluator": "v4",
+      "stages": [
+        {
+          "cloudProvider": "ecs",
+          "cloudProviderType": "ecs",
+          "imageLabelOrSha": "away168/rps:${parameters.version}",
+          "name": "Find Image from Tags",
+          "refId": "1",
+          "requisiteStageRefIds": [],
+          "type": "findImageFromTags"
+        },
+        {
+          "clusters": [
+            {
+              "account": "ecs-dev-1",
+              "app": "rpsapp",
+              "application": "rpsapp",
+              "associatePublicIpAddress": true,
+              "availabilityZones": {
+                "us-west-2": [
+                  "us-west-2a",
+                  "us-west-2b",
+                  "us-west-2c",
+                  "us-west-2d"
+                ]
+              },
+              "capacity": {
+                "desired": 1,
+                "max": 1,
+                "min": 1
+              },
+              "cloudProvider": "ecs",
+              "computeUnits": 512,
+              "copySourceScalingPoliciesAndActions": false,
+              "dockerImageCredentialsSecret": "None (No registry credentials)",
+              "dockerLabels": {},
+              "ecsClusterName": "rps-ecs",
+              "environmentVariables": {
+                "RPS_USER": "${parameters.user}"
+              },
+              "healthCheckGracePeriodSeconds": 1,
+              "healthCheckType": "EC2",
+              "iamRole": "None (No IAM role)",
+              "imageDescription": {
+                "fromContext": true,
+                "imageId": "away168/rps:${parameters.version}",
+                "imageLabelOrSha": "away168/rps:${parameters.version}",
+                "stageId": "1"
+              },
+              "launchType": "FARGATE",
+              "loadBalancers": [],
+              "moniker": {
+                "app": "rpsapp",
+                "stack": "dev"
+              },
+              "networkMode": "awsvpc",
+              "placementConstraints": [],
+              "placementStrategyName": "",
+              "placementStrategySequence": [],
+              "preferSourceCapacity": false,
+              "provider": "ecs",
+              "reservedMemory": 1024,
+              "securityGroupNames": [
+                "http-and-https"
+              ],
+              "securityGroups": [],
+              "serviceDiscoveryAssociations": [],
+              "stack": "dev",
+              "strategy": "highlander",
+              "subnetType": "default-az4",
+              "tags": {},
+              "targetGroup": "",
+              "targetGroupMappings": [
+                {
+                  "containerName": "",
+                  "containerPort": 80,
+                  "targetGroup": "rps-ecs-targetgroup"
+                }
+              ],
+              "taskDefinitionArtifact": {},
+              "useSourceCapacity": false,
+              "useTaskDefinitionArtifact": false
+            }
+          ],
+          "name": "Deploy",
+          "refId": "2",
+          "requisiteStageRefIds": [
+            "1"
+          ],
+          "type": "deploy"
+        }
+      ],
+      "triggers": [],
+      "updateTs": "1591083655000"
     }
   ]
 }
