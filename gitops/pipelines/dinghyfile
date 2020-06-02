@@ -1,16 +1,16 @@
 {
-  "application": "rps-app",
+  "application": "rpsapp",
   "spec": {
     "email": "andrew.way@armory.io"
   },
   "globals": {
     "waitTime": "10",
-    "application": "rps-app"
+    "application": "rpsapp"
   },
   "deleteStalePipelines": false,
   "pipelines": [
     {
-      "application": "rps-app",
+      "application": "rpsapp",
       "name": "Deploy to Dev (GitOps)",
       "keepWaitingPipelines": false,
       "lastModifiedBy": "away168",
