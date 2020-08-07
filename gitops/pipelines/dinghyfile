@@ -90,7 +90,7 @@
                 }
               }
             ]
-          "name" "deploy App"
+          "name" "deploy RPS App"
           "requisiteStageRefIds" [
               "deploy CM"
             ]
