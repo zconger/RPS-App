@@ -31,7 +31,7 @@
           "required": true
         },
         {
-          "default": "v0.1.2",
+          "default": "v0.1.1",
           "description": "",
           "hasOptions": true,
           "label": "",
