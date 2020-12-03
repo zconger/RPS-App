@@ -7,10 +7,10 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
   labels:
     app: rps
-  name: rps-${dns}-ingress
+  name: rps-${parameters.dns}-ingress
 spec:
   rules:
-    - host: ${dns}.se.armory.io
+    - host: ${parameters.dns}.se.armory.io
       http:
         paths:
           - backend:
@@ -19,5 +19,5 @@ spec:
             path: /
   tls:
     - hosts:
-        - ${dns}.se.armory.io
-      secretName: ${dns}-cert
+        - ${parameters.dns}.se.armory.io
+      secretName: ${parameters.dns}-cert
