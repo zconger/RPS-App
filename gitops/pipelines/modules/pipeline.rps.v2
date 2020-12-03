@@ -1,0 +1,104 @@
+    {
+      "application": "{{ var "application" }}",
+      "name": "{{var "pipelineName" }}",
+      "keepWaitingPipelines": false,
+      "lastModifiedBy": "away168",
+      "limitConcurrent": true,
+      "expectedArtifacts": [
+        {
+          "defaultArtifact": {
+            "customKind": true,
+            "id": "a4cac138-2216-4891-ac66-c27ef4136537"
+          },
+          "displayName": "rps app",
+          "id": "b0bd8823-8acd-40b0-b7a9-340163cf5923",
+          "matchArtifact": {
+            "artifactAccount": "docker-registry",
+            "id": "bdbebd3c-466a-405d-857f-4be9401365c4",
+            "name": "index.docker.io/away168/rps",
+            "type": "docker/image"
+          },
+          "useDefaultArtifact": false,
+          "usePriorArtifact": false
+        }
+      ],
+      "parameterConfig": [
+        {
+          "default": "${trigger.user}",
+          "description": "",
+          "hasOptions": false,
+          "label": "",
+          "name": "user",
+          "options": [
+            {
+              "value": ""
+            }
+          ],
+          "pinned": true,
+          "required": true
+        },
+        {
+          "default": "rps",
+          "description": "",
+          "hasOptions": false,
+          "label": "",
+          "name": "dns",
+          "options": [
+            {
+              "value": ""
+            }
+          ],
+          "pinned": true,
+          "required": true
+        }
+      ],
+      "spelEvaluator": "v4",
+      "stages": [
+        {{ module "deploy.artifact.v1"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/ingress.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/ingress.yml"
+          "name" "deploy Ingress"
+        }},        
+        {{ module "deploy.artifact.v1"
+           "artifactAccount" "github"
+           "artifactName" "gitops/manifests/service.yml"
+           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/service.yml"
+           "name" "deploy LB"
+        }},
+        {{ module "deploy.artifact.v1"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/configmap.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/configmap.yml"
+          "name" "deploy CM"
+        }},
+        {{ module "deploy.artifact.v1"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/deployment.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
+          "name" "deploy to dev"
+          "requiredArtifactIds" [
+            "b0bd8823-8acd-40b0-b7a9-340163cf5923"
+          ]
+          "requisiteStageRefIds" [
+            "deploy CM",
+            "deploy Ingress",
+            "deploy LB"
+          ]
+        }}
+      ],
+      "triggers": [
+        {
+          "account": "docker-registry-away168",
+          "enabled": false,
+          "expectedArtifactIds": [
+            "b0bd8823-8acd-40b0-b7a9-340163cf5923"
+          ],
+          "organization": "away168",
+          "registry": "index.docker.io",
+          "repository": "away168/rps",
+          "type": "docker"
+        }
+      ],
+      "updateTs": "1589949805000"
+    }

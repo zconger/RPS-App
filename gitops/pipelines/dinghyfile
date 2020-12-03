@@ -121,7 +121,7 @@
       ],
       "updateTs": "1589949805000"
     },
-    {{ module "pipeline.rps.v1"
+    {{ local_module "/gitops/pipelines/modules/pipeline.rps.v2"
         "pipelineName" "Deploy RPS App to Prod (GitOps)"
         "namespace" "prod"
         "account" "prod-us-west-2"
@@ -217,7 +217,7 @@
                 "selector": {
                   "redblack": "rps-redblack"
                 },
-                "type": "LoadBalancer"
+                "type": "ClusterIp"
               }
             }
           ],
