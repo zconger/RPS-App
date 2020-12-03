@@ -1,0 +1,486 @@
+{
+  "application": "{{ var "application" }}",
+  "name": "{{var "pipelineName" }}",
+  "description": "check out the app here : https://rps-rb.se.armory.io/",
+  "keepWaitingPipelines": false,
+  "lastModifiedBy": "away168",
+  "limitConcurrent": true,
+  "parallel": false,
+  "parameterConfig": [
+    {
+      "default": "Napolean Dynamite",
+      "description": "",
+      "hasOptions": true,
+      "label": "",
+      "name": "user",
+      "options": [
+        {
+          "value": "Napolean Dynamite"
+        },
+        {
+          "value": "${trigger.user}"
+        },
+        {
+          "value": "Brad Pitt"
+        },
+        {
+          "value": "Nacho Libre"
+        }
+      ],
+      "pinned": true,
+      "required": true
+    },
+    {
+      "default": "v0.1.2",
+      "description": "",
+      "hasOptions": true,
+      "label": "",
+      "name": "tag",
+      "options": [
+        {
+          "value": "v1.0.0"
+        },
+        {
+          "value": "v0.1.1"
+        },
+        {
+          "value": "v0.1.2"
+        }
+      ],
+      "pinned": true,
+      "required": true
+    },
+    {
+      "default": "false",
+      "description": "",
+      "hasOptions": true,
+      "label": "Advanced RB Deployment?",
+      "name": "advanced",
+      "options": [
+        {
+          "value": "true"
+        },
+        {
+          "value": "false"
+        }
+      ],
+      "pinned": true,
+      "required": true
+    }
+  ],
+  "stages": [
+    {
+      "account": "prod-us-west-2",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+            "name": "rps-redblack"
+          },
+          "spec": {
+            "ports": [
+              {
+                "port": 80,
+                "protocol": "TCP",
+                "targetPort": 80
+              }
+            ],
+            "selector": {
+              "redblack": "rps-redblack"
+            },
+            "type": "ClusterIP"
+          }
+        },
+        {
+          "apiVersion": "extensions/v1beta1",
+          "kind": "Ingress",
+          "metadata": {
+            "annotations": {
+              "cert-manager.io/cluster-issuer": "letsencrypt-prod",
+              "kubernetes.io/ingress.class": "nginx",
+              "nginx.ingress.kubernetes.io/force-ssl-redirect": "true"
+            },
+            "labels": {
+              "app": "rps"
+            },
+            "name": "rps-rb-ingress"
+          },
+          "spec": {
+            "rules": [
+              {
+                "host": "rps-rb.se.armory.io",
+                "http": {
+                  "paths": [
+                    {
+                      "backend": {
+                        "serviceName": "rps-redblack",
+                        "servicePort": 80
+                      },
+                      "path": "/"
+                    }
+                  ]
+                }
+              }
+            ],
+            "tls": [
+              {
+                "hosts": [
+                  "rps-rb.se.armory.io"
+                ],
+                "secretName": "rps-rb-cert"
+              }
+            ]
+          }
+        }
+      ],
+      "moniker": {
+        "app": "rpsapp"
+      },
+      "name": "Deploy RedBlack Service",
+      "namespaceOverride": "prod",
+      "refId": "1",
+      "requisiteStageRefIds": [
+        "6"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "stageEnabled": {
+        "expression": "${#stage(\"Find RB Service\").status != \"SUCCEEDED\"}",
+        "type": "expression"
+      },
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false,
+          "services": []
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "prod-us-west-2",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "v1",
+          "data": {
+            "RPS_USER": "${parameters.user}",
+            "RPS_VERSION": "v0.1.2",
+            "RPS_WEBPORT": "80"
+          },
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "rps-config"
+          }
+        }
+      ],
+      "moniker": {
+        "app": "rpsapp"
+      },
+      "name": "Deploy CM",
+      "namespaceOverride": "prod",
+      "refId": "2",
+      "requisiteStageRefIds": [],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "trafficManagement": {
+        "enabled": false,
+        "options": {
+          "enableTraffic": false,
+          "services": []
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "prod-us-west-2",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "apps/v1",
+          "kind": "ReplicaSet",
+          "metadata": {
+            "annotations": {
+              "strategy.spinnaker.io/versioned": "false"
+            },
+            "name": "rps-rb"
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "app": "rps-rb"
+              }
+            },
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "rps-rb"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "envFrom": [
+                      {
+                        "configMapRef": {
+                          "name": "rps-config"
+                        }
+                      }
+                    ],
+                    "image": "away168/rps",
+                    "name": "rps-rb",
+                    "ports": [
+                      {
+                        "containerPort": 80
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "moniker": {
+        "app": "rpsapp"
+      },
+      "name": "Deploy RedBlack Simple",
+      "namespaceOverride": "prod",
+      "refId": "3",
+      "requiredArtifactIds": [],
+      "requiredArtifacts": [
+        {
+          "artifact": {
+            "artifactAccount": "docker-registry",
+            "id": "87566dde-1796-4e63-97d8-34fe5706d589",
+            "name": "away168/rps",
+            "reference": "away168/rps:${parameters.tag}",
+            "type": "docker/image",
+            "version": "${parameters.tag}"
+          }
+        }
+      ],
+      "requisiteStageRefIds": [
+        "2",
+        "1"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "stageEnabled": {
+        "expression": "${parameters.advanced==\"false\"}",
+        "type": "expression"
+      },
+      "trafficManagement": {
+        "enabled": true,
+        "options": {
+          "enableTraffic": true,
+          "namespace": "prod",
+          "services": [
+            "service rps-redblack"
+          ],
+          "strategy": "redblack"
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "completeOtherBranchesThenFail": false,
+      "continuePipeline": false,
+      "failPipeline": false,
+      "name": "Advanced Deployment?",
+      "preconditions": [
+        {
+          "context": {
+            "expression": "${parameters.advanced==\"true\"}"
+          },
+          "failPipeline": false,
+          "type": "expression"
+        }
+      ],
+      "refId": "4",
+      "requisiteStageRefIds": [
+        "2",
+        "1"
+      ],
+      "type": "checkPreconditions"
+    },
+    {
+      "account": "prod-us-west-2",
+      "app": "rpsapp",
+      "cloudProvider": "kubernetes",
+      "completeOtherBranchesThenFail": false,
+      "continuePipeline": true,
+      "failPipeline": false,
+      "location": "prod",
+      "manifestName": "service rps-redblack",
+      "mode": "static",
+      "name": "Find RB Service",
+      "refId": "6",
+      "requisiteStageRefIds": [],
+      "type": "findArtifactsFromResource"
+    },
+    {
+      "account": "prod-us-west-2",
+      "cloudProvider": "kubernetes",
+      "manifests": [
+        {
+          "apiVersion": "apps/v1",
+          "kind": "ReplicaSet",
+          "metadata": {
+            "name": "rps-rb"
+          },
+          "spec": {
+            "replicas": 1,
+            "selector": {
+              "matchLabels": {
+                "app": "rps-rb"
+              }
+            },
+            "template": {
+              "metadata": {
+                "labels": {
+                  "app": "rps-rb"
+                }
+              },
+              "spec": {
+                "containers": [
+                  {
+                    "envFrom": [
+                      {
+                        "configMapRef": {
+                          "name": "rps-config"
+                        }
+                      }
+                    ],
+                    "image": "away168/rps",
+                    "name": "rps-rb",
+                    "ports": [
+                      {
+                        "containerPort": 80
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "moniker": {
+        "app": "rpsapp"
+      },
+      "name": "Deploy RedBlack Advanced",
+      "namespaceOverride": "prod",
+      "refId": "7",
+      "requiredArtifactIds": [],
+      "requiredArtifacts": [
+        {
+          "artifact": {
+            "artifactAccount": "docker-registry",
+            "id": "87566dde-1796-4e63-97d8-34fe5706d589",
+            "name": "away168/rps",
+            "reference": "away168/rps:${parameters.tag}",
+            "type": "docker/image",
+            "version": "${parameters.tag}"
+          }
+        }
+      ],
+      "requisiteStageRefIds": [
+        "4"
+      ],
+      "skipExpressionEvaluation": false,
+      "source": "text",
+      "stageEnabled": {
+        "expression": "${parameters.advanced==\"true\"}",
+        "type": "expression"
+      },
+      "trafficManagement": {
+        "enabled": true,
+        "options": {
+          "enableTraffic": true,
+          "namespace": "prod",
+          "services": [
+            "service rps-redblack"
+          ]
+        }
+      },
+      "type": "deployManifest"
+    },
+    {
+      "account": "prod-us-west-2",
+      "app": "rpsapp",
+      "cloudProvider": "kubernetes",
+      "cluster": "replicaSet rps-rb",
+      "criteria": "second_newest",
+      "kind": "replicaSet",
+      "location": "prod",
+      "mode": "dynamic",
+      "name": "Disable Black",
+      "refId": "8",
+      "requisiteStageRefIds": [
+        "7"
+      ],
+      "type": "disableManifest"
+    },
+    {
+      "name": "Wait 5mins",
+      "refId": "9",
+      "requisiteStageRefIds": [
+        "8"
+      ],
+      "type": "wait",
+      "waitTime": 300
+    },
+    {
+      "account": "prod-us-west-2",
+      "app": "rpsapp",
+      "cloudProvider": "kubernetes",
+      "cluster": "replicaSet rps-rb",
+      "criteria": "oldest",
+      "kind": "replicaSet",
+      "location": "prod",
+      "mode": "dynamic",
+      "name": "Delete Black",
+      "options": {
+        "cascading": true
+      },
+      "refId": "10",
+      "requisiteStageRefIds": [
+        "9"
+      ],
+      "type": "deleteManifest"
+    },
+    {
+      "account": "prod-us-west-2",
+      "app": "rpsapp",
+      "cloudProvider": "kubernetes",
+      "cluster": "replicaSet rps-rb",
+      "criteria": "oldest",
+      "kind": "replicaSet",
+      "location": "prod",
+      "mode": "dynamic",
+      "name": "Delete Black",
+      "options": {
+        "cascading": true
+      },
+      "refId": "11",
+      "requisiteStageRefIds": [
+        "12"
+      ],
+      "type": "deleteManifest"
+    },
+    {
+      "name": "Wait",
+      "refId": "12",
+      "requisiteStageRefIds": [
+        "3"
+      ],
+      "type": "wait",
+      "waitTime": 30
+    }
+  ],
+  "updateTs": "1606978086000"
+}

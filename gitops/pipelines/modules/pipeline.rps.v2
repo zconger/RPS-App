@@ -76,7 +76,7 @@
           "artifactAccount" "github"
           "artifactName" "gitops/manifests/deployment.yml"
           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
-          "name" "deploy to dev"
+          "name" "deploy RPS App"
           "requiredArtifactIds" [
             "b0bd8823-8acd-40b0-b7a9-340163cf5923"
           ]
