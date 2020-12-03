@@ -89,43 +89,22 @@
           "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/configmap.yml"
           "name" "deploy CM"
         }},
-        {
-          "account": "dev-us-west-2",
-          "cloudProvider": "kubernetes",
-          "manifestArtifact": {
-            "artifactAccount": "github",
-            "id": "gitops/manifests/deployment.yml",
-            "name": "gitops/manifests/deployment.yml",
-            "reference": "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml",
-            "type": "github/file",
-            "version": "master"
-          },
-          "moniker": {
-            "app": "rpsapp"
-          },
-          "name": "deploy RPS App",
-          "namespaceOverride": "dev",
-          "refId": "deploy RPS App",
-          "requiredArtifactIds": [
+        {{ module "deploy.artifact.v1"
+          "account" "dev-us-west-2"
+          "namespace" "dev"
+          "artifactAccount" "github"
+          "artifactName" "gitops/manifests/deployment.yml"
+          "reference" "https://api.github.com/repos/away168/RPS-App/contents/gitops/manifests/deployment.yml"
+          "name" "deploy to dev"
+          "requiredArtifactIds" [
             "b0bd8823-8acd-40b0-b7a9-340163cf5923"
-          ],
-          "requiredArtifacts": [],
-          "requisiteStageRefIds": [
+          ]
+          "requisiteStageRefIds" [
             "deploy CM",
-            "1",
+            "deploy Ingress",
             "deploy LB"
-          ],
-          "skipExpressionEvaluation": false,
-          "source": "artifact",
-          "trafficManagement": {
-            "enabled": false,
-            "options": {
-              "enableTraffic": false,
-              "services": []
-            }
-          },
-          "type": "deployManifest"
-        }
+          ]
+        }}
       ],
       "triggers": [
         {
