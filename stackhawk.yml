@@ -2,6 +2,12 @@ app:
   applicationId: 6e608071-6a3f-4b35-ad53-ff162c304be9
   host: ${APP_HOST:http://rps.dev}
   env: ${APP_ENV:Development}
+#  excludePaths:
+#    - "/static/vendor/jquery/jquery.min.js"
+#  includePaths:
+#    - "/robots.txt"
 
-hawk:
-  failureThreshold: HIGH
+#hawk:
+#  failureThreshold: high
+#  spider:
+#    base: false

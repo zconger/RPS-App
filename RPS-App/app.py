@@ -31,7 +31,7 @@ def hello():
 def compete():
     print (username)
     print (version)
-    if request.args.get('gesture', type=int) not in [0, 1, 2, None]:
+    if request.args.get('gesture') not in ['0', '1', '2', None]:
         return page_not_found(404)
     playerGesture = gestureMap(request.args.get('gesture', random.randint(0, 2), type=int))
     print (playerGesture)
