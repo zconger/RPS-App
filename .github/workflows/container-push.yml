@@ -21,4 +21,4 @@ jobs:
           username: zconger
           password: ${{ secrets.DOCKER_ZCONGER }}
           repository: zconger/rps
-          tags: "${VERSION}"
+          tags: ${{ env.VERSION }}
