@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+###
+# Bump the patch version in ./VERSION. Add extra arguments if desired.
+
+EXTRA_ARGS=$@
 
 # Check for bump2version and try to install if necessary
 if ! command -v bump2version; then
@@ -8,7 +12,9 @@ if ! command -v bump2version; then
 fi
 
 # Bump version
-if ! bump2version --dry-run --list patch; then
-  >&2 echo "Failed to bump version. Do you have bump2version installed? Try this:"
-  >&2 echo "  pip install bump2version"
+if ! bump2version --dry-run --list "${EXTRA_ARGS}" patch; then
+  >&2 echo
+  >&2 echo "Failed to bump version. Check the following:"
+  >&2 echo "  - is bump2version installed? 'pip install bump2version'"
+  >&2 echo "  - is this repo dirty? 'git commit -a -m <commit-message>'"
 fi
