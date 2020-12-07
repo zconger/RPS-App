@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+IMAGE=zconger/rps
 VERSION=$(cat ./VERSION)
-docker build . -t zconger/rps
-docker tag zconger/rps zconger/rps:"${VERSION}"
-docker push zconger/rps
-docker push zconger/rps:"${VERSION}"
+
+docker build . -t "${IMAGE}"
+docker tag "${IMAGE}" "${IMAGE}:${VERSION}"
+docker push "${IMAGE}"
+docker push "${IMAGE}:${VERSION}"
